@@ -14,6 +14,19 @@ require "action_view/railtie"
 require "action_cable/engine"
 require "sprockets/railtie"
 require "rails/test_unit/railtie"
+# Fix for LoggerThreadSafeLevel in Rails 6.1 + Ruby 3.1
+require "logger"
+module ActiveSupport
+  module LoggerThreadSafeLevel
+    Logger::Severity.constants.each do |severity|
+      class_eval <<-EOT, __FILE__, __LINE__ + 1
+        def #{severity.downcase}?                # def debug?
+          Logger::#{severity} <= level          #   DEBUG <= level
+        end                                      # end
+      EOT
+    end
+  end
+end
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
