@@ -1,10 +1,13 @@
+# config/routes.rb
 Rails.application.routes.draw do
-  devise_for :users
+  # Let OmniAuth handle all auth routes starting with /auth/
+  # Don't define /auth/auth0 as a Rails route at all
   
-  devise_scope :user do
-    get '/users/sign_out' => 'devise/sessions#destroy'
-  end
-  
+  get '/auth/auth0/callback', to: 'sessions#create'
+  get '/auth/failure', to: 'sessions#failure'
+  get '/logout', to: 'sessions#destroy'
+  get '/login', to: 'sessions#new', as: :login
+
   root "homes#index"
   
   namespace :api do

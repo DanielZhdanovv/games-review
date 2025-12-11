@@ -1,21 +1,20 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  mount_uploader :profile_photo, ProfilePhotoUploader
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
-
-  validates :first_name, presence: true
   
-  has_many :favorite_games
-  has_many :games, through: :favorite_games
+def self.from_omniauth(auth)
+  where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+    user.email = auth.info.email
+    user.first_name = auth.info.name  # This might be what you need
+    user.image = auth.info.image
+    
+    # Set default values for required field
+    user.first_name ||= "User"
+  end
+end
+  
   has_many :reviews
+  has_many :favorite_games
+  has_many :favorites, through: :favorite_games, source: :game
   
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
-
-  def admin?
-    role == "admin"
-  end 
-
+  validates :uid, presence: true, uniqueness: { scope: :provider }
+  validates :provider, presence: true
 end

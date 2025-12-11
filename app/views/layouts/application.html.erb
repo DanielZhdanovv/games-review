@@ -13,13 +13,25 @@
 <ul class="menu menu-hover-lines">
 <li class="free-games"><%= link_to  'Free Games', root_path %></li>
   
-      <% if signed_in? %>
-      
-        <li class="nav"><%= link_to "Sign Out", destroy_user_session_path, method: :delete  %></li>
-      <% else %>
-        <li class="nav"><%= link_to "Sign In", new_user_session_path %></li>
-        <li class="nav"><%= link_to "Sign Up", new_user_registration_path %></li>
-      <% end %>
+<% if logged_in? %>
+  <span>Welcome, <%= current_user.name %></span>
+  <%= link_to "Logout", logout_path %>
+  
+  <!-- Favorite functionality remains the same -->
+  <% if @game && current_user %>
+    <% if current_user.favorites.exists?(@game.id) %>
+      <%= button_to "Remove from Favorites", 
+          api_v1_favorite_game_path(current_user.favorite_games.find_by(game_id: @game.id)), 
+          method: :delete %>
+    <% else %>
+      <%= button_to "Add to Favorites", 
+          api_v1_favorite_games_path(game_id: @game.id), 
+          method: :post %>
+    <% end %>
+  <% end %>
+<% else %>
+<%= link_to "Login", login_path %>
+<% end %>
     
   </div>
 </ul>

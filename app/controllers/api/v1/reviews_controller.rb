@@ -1,11 +1,12 @@
 class Api::V1::ReviewsController < ApplicationController
+  skip_before_action :verify_authenticity_token
 
   def show
     render json: Review.find_by(params[:id])
   end
   def create
     game = Game.find_by(api_id: params[:game_id])
-    review = Review.new(review_params)
+    review = current_user.reviews.new(review_params)
     review.user = current_user
     review.game = game
     if review.save
@@ -51,6 +52,6 @@ class Api::V1::ReviewsController < ApplicationController
 
   private
   def review_params
-    params.require(:review).permit(:body, :upvotes)
+    params.require(:review).permit(:body, :game_id, :upvotes)
   end
 end

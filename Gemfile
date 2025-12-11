@@ -7,7 +7,6 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
-gem "devise"
 gem 'jbuilder', '~> 2.5'
 gem 'carrierwave'
 # gem 'fog'
@@ -21,10 +20,6 @@ end
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-
-group :development, :test do
-
-end
 
 group :development do
   gem 'web-console', '>= 3.3.0'
@@ -51,3 +46,8 @@ gem 'faraday'
 gem "active_model_serializers"
 gem "chartkick"
 gem 'nokogiri', '~> 1.16'
+gem 'omniauth-auth0'
+gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails'
+gem 'omniauth'
+gem 'omniauth-rails_csrf_protection'

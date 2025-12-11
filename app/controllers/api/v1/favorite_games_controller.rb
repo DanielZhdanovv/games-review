@@ -1,23 +1,18 @@
 class Api::V1::FavoriteGamesController < ApplicationController
-
-def index
-  user = current_user
-  favorite = FavoriteGame.game
-  render json: favorite
-end
-
-def create
-  if FavoriteGame.exists?(user: current_user, game_id: params[:game])
-    FavoriteGame.where(user: current_user, game_id: params[:game])[0].delete
-    render json: {success: "succeeded"}
-  else
-  favorite = FavoriteGame.new(user: current_user, game_id: params[:game])
-  if favorite.save
-      render json: {success: "succeeded"}
-  else 
-      render json: {errors: favorite.errors.full_messages.to_sentence}
+  before_action :authenticate_user!
+  
+  def create
+    @favorite_game = current_user.favorite_games.create(game_id: params[:game_id])
+    if @favorite_game.save
+      render json: { success: true, favorite_game: @favorite_game }
+    else
+      render json: { success: false, errors: @favorite_game.errors }
+    end
   end
-end
-end
+
+  def index
+    @favorite_games = current_user.favorite_games.includes(:game)
+    render json: @favorite_games
+  end
 end
 
