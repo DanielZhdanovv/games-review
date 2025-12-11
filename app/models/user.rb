@@ -4,7 +4,7 @@ def self.from_omniauth(auth)
   where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
     user.email = auth.info.email
     user.first_name = auth.info.name  # This might be what you need
-    user.image = auth.info.image
+    user.profile_photo = auth.info.image
     
     # Set default values for required field
     user.first_name ||= "User"
