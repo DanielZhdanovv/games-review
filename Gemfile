@@ -1,9 +1,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.0.2'
-
-gem 'rails', '~> 6.0'
+ruby '~> 3.1.0'
+gem 'rails', '~> 7.0'
 gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
@@ -11,7 +10,7 @@ gem 'uglifier', '>= 1.3.0'
 gem "devise"
 gem 'jbuilder', '~> 2.5'
 gem 'carrierwave'
-gem 'fog'
+# gem 'fog'
 group :development, :test do
   gem "dotenv-rails"
 end
@@ -29,7 +28,7 @@ end
 
 group :development do
   gem 'web-console', '>= 3.3.0'
-  gem 'listen', '>= 3.0.5', '< 3.3.0'
+  gem 'listen', '~> 3.5'
 end
 
 
@@ -51,3 +50,4 @@ gem 'webpacker', '~> 3.3'
 gem 'faraday'
 gem "active_model_serializers"
 gem "chartkick"
+gem 'nokogiri', '~> 1.16'
