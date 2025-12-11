@@ -1,13 +1,12 @@
 Rails.application.routes.draw do
   devise_for :users
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  
+  devise_scope :user do
+    get '/users/sign_out' => 'devise/sessions#destroy'
+  end
+  
   root "homes#index"
-
-  get "/games", to: "homes#index"
-  get "/games/:id", to: "homes#index"
-  get "/games/:id", to: "homes#index"
-  get "/user/:id", to: "homes#index"
-
+  
   namespace :api do
     namespace :v1 do
       resources :games, only: [:index, :show]
@@ -16,5 +15,4 @@ Rails.application.routes.draw do
       resources :favorite_games, only: [:index, :create]
     end
   end
-
 end
