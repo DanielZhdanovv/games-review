@@ -1,15 +1,23 @@
-class UsersController < ApplicationController
-  def index
-    @users = User.all
-    render json: @users.as_json(
-      only: [:id, :first_name, :email, :profile_photo]
-    )
-  end
+class User < ApplicationRecord
+  # The join model
+  has_many :favorites, class_name: 'FavoriteGame', dependent: :destroy
   
-  def show
-    @user = User.find(params[:id])
-    render json: @user.as_json(
-      only: [:id, :first_name, :email, :profile_photo]
-    )
-  end
+  # The actual games through the join
+  has_many :favorite_games, through: :favorites, source: :game
+end
+
+# app/models/game.rb
+class Game < ApplicationRecord
+  # The join model  
+  has_many :favorites, class_name: 'FavoriteGame', dependent: :destroy
+  
+  # The users through the join
+  has_many :favorited_by, through: :favorites, source: :user
+end
+
+# app/models/favorite_game.rb  
+class FavoriteGame < ApplicationRecord
+  belongs_to :user
+  belongs_to :game
+  validates :user_id, uniqueness: { scope: :game_id }
 end

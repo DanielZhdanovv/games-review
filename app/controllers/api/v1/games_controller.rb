@@ -1,8 +1,5 @@
-# app/controllers/api/v1/games_controller.rb
-module Api
   module V1
     class GamesController < ApplicationController
-      # skip_before_action :verify_authenticity_token
       protect_from_forgery with: :null_session
       
       def index

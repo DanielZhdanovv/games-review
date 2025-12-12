@@ -20,6 +20,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_11_202008) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_favorite_games_on_game_id"
+    t.index ["user_id", "game_id"], name: "index_favorite_games_on_user_id_and_game_id", unique: true
     t.index ["user_id"], name: "index_favorite_games_on_user_id"
   end
 
@@ -81,4 +82,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_11_202008) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
+
+  add_foreign_key "favorite_games", "games"
+  add_foreign_key "favorite_games", "users"
 end
