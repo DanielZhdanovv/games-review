@@ -16,30 +16,40 @@ const GamesShow = (props) => {
 	const [userPhoto, setUserPhoto] = useState("");
 	const gameId = props.match.params.id;
 	const [formData, setFormData] = useState({
-		rating: "",
-		body: "",
-		game_id: gameId,
+	body: "",
+	game_id: "",
 	});
 	useEffect(() => {
-		helperFetch(`/api/v1/games/${gameId}`).then((gameData) => {
-			setGame(gameData);
-			setDescription(gameData.description.slice(0, 830));
-			setSubscribed(gameData.favorite_games.length);
-			if (gameData.reviews) {
-				setReviews(gameData.reviews);
-				setReviewNumber(gameData.reviews.length);
-			}
+	fetch(`/games/${gameId}`, {
+		headers: { 'Accept': 'application/json' }
+	})
+	.then(response => response.json())
+	.then((gameData) => {		
+		setGame(gameData);
+		setFormData({
+		body: "",
+		game_id: gameData.id, // Use DATABASE ID, not api_id
 		});
-		helperFetch("/api/v1/users").then((userData) => {
-			if (userData) {
-				setUser(userData);
-				setUserPhoto(userData.profile_photo.url);
-			}
-		});
+
+		setDescription(gameData.short_description);
+		
+		if (gameData.reviews) {
+		setReviews(gameData.reviews);
+		setReviewNumber(gameData.reviews.length);
+		}
+	});
+	helperFetch("/users").then((userData) => {
+	if (userData) {
+		setUser(userData);
+		// Safe access - profile_photo might be null or a string
+		const photo = userData.profile_photo;
+		setUserPhoto(typeof photo === 'object' ? photo?.url : photo || "");
+	}
+	});
 	}, []);
 
 	const favorite = async (event) => {
-		const response = await fetch("/api/v1/favorite_games", {
+		const response = await fetch("/favorite_games", { 
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -66,7 +76,7 @@ const GamesShow = (props) => {
 
 	const addNewReview = async (formPayload) => {
 		try {
-			const response = await fetch("/api/v1/reviews", {
+			const response = await fetch("/reviews", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -84,13 +94,12 @@ const GamesShow = (props) => {
 				alert(newReview.errors);
 			} else {
 				setReviews([...reviews, newReview]);
-				setReviewNumber(game.reviews.length);
+				setReviewNumber(game.reviews);
 			}
 
 			setFormData({
-				rating: "",
-				body: "",
-				game_id: gameId,
+			body: "",
+			game_id: gameId,
 			});
 		} catch (err) {
 			console.log(err);
@@ -102,7 +111,7 @@ const GamesShow = (props) => {
 		);
 	};
 	const deleteReview = (id, position) => {
-		fetch(`/api/v1/reviews/${id}`, { method: "DELETE" }).then(() =>
+		fetch(`/reviews/${id}`, { method: "DELETE" }).then(() =>
 			updateReview(position)
 		);
 	};
@@ -150,9 +159,8 @@ const GamesShow = (props) => {
 	if (showMoreStatus) {
 		text = description;
 	} else {
-		text = game.description;
+		text = game.short_description;
 	}
-	let backgroundImage;
 	return (
 		<div className='q1'>
 			<Link to={`/user/${user.id}`}>
@@ -179,10 +187,7 @@ const GamesShow = (props) => {
 					<p> {subscribed} Favored</p>
 					{/* <p>3 Favorite</p> */}
 					<p>
-						{text}{" "}
-						<span className='read-more' onClick={toggleShowMore}>
-							{showMoreStatus ? "Read More" : "Read Less"}
-						</span>
+						{text}
 					</p>
 					<div className='info'>
 						<h2>Aditional information</h2>

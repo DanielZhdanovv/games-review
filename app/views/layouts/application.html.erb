@@ -17,16 +17,15 @@
   <span>Welcome, <%= current_user.first_name %></span>
   <%= link_to "Logout", logout_path %>
   
-  <!-- Favorite functionality remains the same -->
   <% if @game && current_user %>
     <% if current_user.favorites.exists?(@game.id) %>
       <%= button_to "Remove from Favorites", 
-          api_v1_favorite_game_path(current_user.favorite_games.find_by(game_id: @game.id)), 
+          favorite_game_path(current_user.favorite_games.find_by(game_id: @game.id)), 
           method: :delete %>
     <% else %>
-      <%= button_to "Add to Favorites", 
-          api_v1_favorite_games_path(game_id: @game.id), 
-          method: :post %>
+    <%= button_to "Add to Favorites",
+        favorite_games_path(game_id: @game.id),
+        method: :post %>
     <% end %>
   <% end %>
 <% else %>

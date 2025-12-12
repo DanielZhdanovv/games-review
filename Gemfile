@@ -21,6 +21,10 @@ gem 'omniauth-auth0'
 gem 'omniauth'
 gem 'omniauth-rails_csrf_protection'
 
+gem 'sidekiq'
+gem 'redis', '~> 4.0'
+gem 'httparty'
+
 group :development, :test do
   gem 'pry-rails'
   gem 'dotenv-rails'

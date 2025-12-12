@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import ReviewEdit from "./ReviewEdit";
 
+
 const ReviewTiles = (props) => {
+	  console.log("ReviewTiles props:", props);
+  console.log("Review body:", props.review?.body);
+  console.log("Body type:", typeof props.review?.body);
 	const [edit, setEdit] = useState(false);
 	const { review, user, deleteReview, position, currentUser } = props;
 	const [currentReview, setCurrentReview] = useState(review);
@@ -20,7 +24,7 @@ const ReviewTiles = (props) => {
 
 	const updateLikes = async () => {
 		try {
-			const response = await fetch(`/api/v1/reviews/${review.id}`, {
+			const response = await fetch(`/reviews/${review.id}`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
@@ -57,7 +61,7 @@ const ReviewTiles = (props) => {
 	const editReview = async (formPayload) => {
 		setEdit(false);
 		try {
-			const response = await fetch(`/api/v1/reviews/${review.id}`, {
+			const response = await fetch(`/reviews/${review.id}`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",

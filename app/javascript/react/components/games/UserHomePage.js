@@ -10,7 +10,7 @@ const UserHomePage = (props) => {
 	const [userPhoto, setUserPhoto] = useState("");
 	const userId = props.match.params.id;
 	const fetchUser = async () => {
-		const response = await fetch(`/api/v1/users/${userId}`);
+	const response = await fetch(`/users/${userId}`);
 		const userData = await response.json();
 		setUser(userData);
 		setUserPhoto(userData.profile_photo.url);

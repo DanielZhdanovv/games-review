@@ -33,3 +33,12 @@ module RailsStaffGroupProject
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
+
+module GamesReview
+  class Application < Rails::Application
+    # ... other config ...
+    
+    # Add this line
+    config.active_job.queue_adapter = :sidekiq
+  end
+end

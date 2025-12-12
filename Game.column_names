@@ -1,0 +1,2 @@
+rails console
+> Game.column_na

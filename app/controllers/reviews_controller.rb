@@ -1,18 +1,22 @@
-class Api::V1::ReviewsController < ApplicationController
+class ReviewsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def show
     render json: Review.find_by(params[:id])
   end
   def create
-    game = Game.find_by(api_id: params[:game_id])
-    review = current_user.reviews.new(review_params)
-    review.user = current_user
-    review.game = game
-    if review.save
-      render json: review
+    @game = Game.find_by(id: params[:game_id]) || Game.find_by(api_id: params[:game_id])
+    
+    if @game
+      @review = @game.reviews.new(review_params.merge(user: current_user))
+      
+      if @review.save
+        render json: @review, include: [:user]
+      else
+        render json: { errors: @review.errors.full_messages }, status: :unprocessable_entity
+      end
     else
-      render json: {errors: review.errors.full_messages.to_sentence}
+      render json: { error: 'Game not found' }, status: :not_found
     end
   end
 
@@ -23,7 +27,7 @@ class Api::V1::ReviewsController < ApplicationController
   def update
     review = Review.find(params[:id])
     if review.update(review_params)
-      flash[:notification] = "Review updated"
+      flash.now[:notice] = "Review updated"
       render json: review 
     else
       flash.now[:error] = review.errors.full_messages.to_sentence
@@ -33,15 +37,11 @@ class Api::V1::ReviewsController < ApplicationController
 
   def destroy
     review = Review.find(params[:id])
-      review.destroy
-    render json: {Success: "Success"}
+    review.destroy
+    flash[:notice] = 'Game deleted successfully'
   end
 
   private 
-
-  def review_params
-    params[:review].permit(:body, :upvotes)
-  end
 
   def authorize_user
     if !user_signed_in? || !current_user.admin?
@@ -50,8 +50,7 @@ class Api::V1::ReviewsController < ApplicationController
     end
   end
 
-  private
   def review_params
-    params.require(:review).permit(:body, :game_id, :upvotes)
+    params.require(:review).permit(:body, :game_id)
   end
 end

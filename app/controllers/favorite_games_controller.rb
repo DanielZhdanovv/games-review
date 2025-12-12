@@ -1,4 +1,4 @@
-class Api::V1::FavoriteGamesController < ApplicationController
+class FavoriteGamesController < ApplicationController
   before_action :authenticate_user!
   
   def create
