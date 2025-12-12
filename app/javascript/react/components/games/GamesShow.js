@@ -28,7 +28,7 @@ const GamesShow = (props) => {
 		setGame(gameData);
 		setFormData({
 		body: "",
-		game_id: gameData.id, // Use DATABASE ID, not api_id
+		game_id: gameData.id,
 		});
 
 		setDescription(gameData.short_description);
@@ -39,8 +39,8 @@ const GamesShow = (props) => {
 		}
 	});
 	helperFetch("/users").then((userData) => {
-	if (userData) {
-		setUser(userData);
+	if (userData && userData.length > 0) {
+	setUser(userData[0]);
 		// Safe access - profile_photo might be null or a string
 		const photo = userData.profile_photo;
 		setUserPhoto(typeof photo === 'object' ? photo?.url : photo || "");
@@ -74,37 +74,40 @@ const GamesShow = (props) => {
 		style = "favored";
 	}
 
-	const addNewReview = async (formPayload) => {
-		try {
-			const response = await fetch("/reviews", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
-				credentials: "same-origin",
-				body: JSON.stringify(formPayload),
-			});
-			if (!response.ok) {
-				const errorMessage = `${response.status} ${response.statusText}`;
-				throw new Error(errorMessage);
-			}
-			const newReview = await response.json();
-			if (newReview.errors) {
-				alert(newReview.errors);
-			} else {
-				setReviews([...reviews, newReview]);
-				setReviewNumber(game.reviews);
-			}
-
-			setFormData({
-			body: "",
-			game_id: gameId,
-			});
-		} catch (err) {
-			console.log(err);
-		}
-	};
+const addNewReview = async (formPayload) => {
+  try {
+    const response = await fetch("/reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      credentials: "same-origin",
+      body: JSON.stringify(formPayload),
+    });
+    
+    if (!response.ok) {
+      const errorMessage = `${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
+    
+    const newReview = await response.json();
+    
+    if (newReview.errors) {
+      alert(newReview.errors);
+    } else {
+      setReviews([...reviews, newReview]);
+      setReviewNumber(reviews.length + 1);
+    }
+    
+    setFormData({
+      body: "",
+      game_id: gameId,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 	const updateReview = (index) => {
 		setReviews(
 			reviews.slice(0, index).concat(reviews.slice(index + 1, reviews.lenght))

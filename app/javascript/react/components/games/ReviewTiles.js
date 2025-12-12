@@ -105,6 +105,7 @@ const ReviewTiles = (props) => {
 	}
 	let deleteButton;
 	let editButton;
+
 	if (currentUser.id === user.id) {
 		deleteButton = (
 			<button

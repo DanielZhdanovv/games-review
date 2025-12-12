@@ -5,7 +5,7 @@ class ReviewsController < ApplicationController
     render json: Review.find_by(params[:id])
   end
   def create
-    @game = Game.find_by(id: params[:game_id]) || Game.find_by(api_id: params[:game_id])
+    @game = Game.find(params[:game_id])
     
     if @game
       @review = @game.reviews.new(review_params.merge(user: current_user))

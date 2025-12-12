@@ -11,12 +11,12 @@ protect_from_forgery with: :null_session
     end
     
     def show
-    @game = Game.find_by(id: params[:id]) || Game.find_by(api_id: params[:id])
+  @game = Game.find(params[:id]) 
     
-        respond_to do |format|
-            format.html
-            format.json { 
-            game_data = @game.as_json(
+    respond_to do |format|
+        format.html
+        format.json do
+        game_data = @game.as_json(
                 only: [:id, :title, :thumbnail, :genre, :short_description, :description, :platform, :api_id, :game_url, :developer, :publisher, :release_date, :screenshot1, :screenshot2, :screenshot3],
                 include: {
                 reviews: {
@@ -29,12 +29,9 @@ protect_from_forgery with: :null_session
                 }
                 }
             )
-            game_data['reviews_count'] = @game.reviews.count
-            
-            # CHANGE THIS LINE:
-            # render json: { data: game_data }  # OLD
-            render json: game_data              # NEW - no wrapper
-            }
+        game_data['reviews_count'] = @game.reviews.count
+        render json: game_data
         end
+    end
     end
 end
